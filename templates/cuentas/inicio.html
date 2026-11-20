@@ -1,0 +1,12 @@
+<h1>Sistema de punto de venta</h1>
+
+<p>
+  Usuario: {{ user.username }} |
+  Negocio: {{ user.negocio|default:"(administrador general)" }} |
+  Rol: {{ user.rol|default:"-" }}
+</p>
+
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">Cerrar sesión</button>
+</form>
