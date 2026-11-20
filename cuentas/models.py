@@ -29,9 +29,14 @@ class Negocio(models.Model):
     nombre = models.CharField(max_length=120)
     giro = models.ForeignKey(Giro, on_delete=models.PROTECT, null=True, blank=True)
     telefono = models.CharField(max_length=20, blank=True)
-    activo = models.BooleanField (default=True)
-    creado_en = models.DateTimeField(auto_now_add=TimeoutError)
+    activo = models.BooleanField(default=True)
+    creado_en = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'negocios'
+
+    def __str__(self):
+        return self.nombre
 
     class Meta:
         db_table = 'negocios'
