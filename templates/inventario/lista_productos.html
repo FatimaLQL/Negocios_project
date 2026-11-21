@@ -1,0 +1,28 @@
+<h1>Productos</h1>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Nombre</th>
+      <th>Categoría</th>
+      <th>Precio</th>
+      <th>Existencias</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in productos %}
+      <tr>
+        <td>{{ p.codigo|default:"-" }}</td>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.categoria|default:"-" }}</td>
+        <td>{{ p.precio_venta }}</td>
+        <td>{{ p.existencias }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">No hay productos.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<a href="{% url 'inicio' %}">Volver al inicio</a>

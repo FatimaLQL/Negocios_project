@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from inventario.views import lista_productos
 
 from cuentas.views import inicio
 
@@ -25,4 +26,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='cuentas/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('', inicio, name='inicio'),
+        path('productos/', lista_productos, name='productos'),
 ]

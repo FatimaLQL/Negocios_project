@@ -5,7 +5,7 @@
   Negocio: {{ user.negocio|default:"(administrador general)" }} |
   Rol: {{ user.rol|default:"-" }}
 </p>
-
+<p><a href="{% url 'productos' %}">Productos</a></p>
 <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
   <button type="submit">Cerrar sesión</button>
