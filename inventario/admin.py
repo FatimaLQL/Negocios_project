@@ -17,4 +17,3 @@ class ProductoAdmin(admin.ModelAdmin):
     )
     search_fields = ('nombre', 'codigo')
     list_filter = ('negocio', 'categoria', 'activo')
-    filter_horizontal = ('proveedores',)

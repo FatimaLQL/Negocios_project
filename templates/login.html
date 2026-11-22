@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión - NegocioPro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 18px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background: #315B55;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+
+        <h2>NegocioPro</h2>
+        <p class="subtitle">Inicia sesión en tu cuenta</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="error">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Correo electrónico</label>
+            <input
+                type="email"
+                name="correo"
+                placeholder="ejemplo@correo.com"
+                required
+            >
+
+            <label>Contraseña</label>
+            <input
+                type="password"
+                name="password"
+                placeholder="Ingresa tu contraseña"
+                required
+            >
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+    </div>
+
+</body>
+</html>

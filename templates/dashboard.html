@@ -1,0 +1,176 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Inicio | NegocioPro{% endblock %}
+
+{% block page_name %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>¡Bienvenido, {{ negocio.nombre }}!</h1>
+        <p>Este es el resumen general de tu negocio.</p>
+    </div>
+
+    <a href="/ventas/" class="btn btn-primary">
+        <i class="fa-solid fa-plus"></i>
+        Nueva venta
+    </a>
+</div>
+
+
+<!-- TARJETAS DE ESTADÍSTICAS -->
+
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div class="stat-icon green">
+                <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+            <span class="badge badge-success">Hoy</span>
+        </div>
+
+        <p>Ventas del día</p>
+        <h2>${{ ventas_hoy|floatformat:2 }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-box"></i>
+            </div>
+        </div>
+
+        <p>Productos registrados</p>
+        <h2>{{ productos_registrados }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div class="stat-icon purple">
+                <i class="fa-solid fa-users"></i>
+            </div>
+        </div>
+
+        <p>Clientes registrados</p>
+        <h2>{{ clientes_registrados }}</h2>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div class="stat-icon orange">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <span class="badge badge-warning">Revisar</span>
+        </div>
+
+        <p>Productos con stock bajo</p>
+        <h2>{{ productos_stock_bajo.count }}</h2>
+    </div>
+
+</div>
+
+<!-- TABLA Y ALERTAS -->
+
+<div class="content-grid">
+
+    <!-- VENTAS RECIENTES -->
+    <div class="card">
+
+        <div class="card-title">
+            Ventas recientes
+        </div>
+
+        <div class="table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Venta</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas_recientes %}
+                    <tr>
+                        <td>#V{{ venta.folio }}</td>
+
+                        <td>
+                            {% if venta.cliente %}
+                                {{ venta.cliente.nombre }} {{ venta.cliente.apellido|default:"" }}
+                            {% else %}
+                                Cliente general
+                            {% endif %}
+                        </td>
+
+                        <td>${{ venta.total|floatformat:2 }}</td>
+
+                        <td>
+                            {% if venta.estado == 'completada' %}
+                                <span class="badge badge-success">Completada</span>
+                            {% else %}
+                                <span class="badge badge-warning">{{ venta.estado|capfirst }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Todavía no hay ventas registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- ALERTAS -->
+    <div class="card">
+
+        <div class="card-title">
+            Alertas de inventario
+        </div>
+        <div style="display:flex; flex-direction:column; gap:15px;">
+
+            {% for producto in productos_stock_bajo %}
+
+                <div>
+                    <span class="badge badge-warning">
+                        Stock bajo
+                    </span>
+
+                    <p style="margin-top:8px; font-weight:bold;">
+                        {{ producto.nombre }}
+                    </p>
+
+                    <small style="color:var(--text-muted);">
+                        Existencias: {{ producto.existencias|floatformat:"-2" }}
+                        {{ producto.unidad_venta }}
+                        | Mínimo: {{ producto.stock_minimo|floatformat:"-2" }}
+                    </small>
+                </div>
+
+                {% if not forloop.last %}
+                    <hr style="border:0; border-top:1px solid var(--border);">
+                {% endif %}
+
+            {% empty %}
+
+                <p style="color:var(--text-muted);">
+                    No hay productos con stock bajo. ¡Todo está en orden!
+                </p>
+
+            {% endfor %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - NegocioPro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 15px;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            display: flex;
+            justify-content: center;
+        }
+
+        .registro-card {
+            background: white;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        h3 {
+            color: #315B55;
+            font-size: 16px;
+            margin-top: 25px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #315B55;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #315B55;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #315B55;
+        }
+
+        .mensaje {
+            padding: 11px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            background: #fee2e2;
+            color: #168F83;
+            font-size: 14px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        a {
+            color: #315B55;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="registro-card">
+
+    <h2>NegocioPro</h2>
+    <p class="subtitle">Registra tu negocio y crea tu cuenta</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mensaje">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <h3>Información del negocio</h3>
+
+        <label>Nombre del negocio *</label>
+        <input type="text" name="nombre_negocio"
+               placeholder="Ej. Mi tienda"
+               maxlength="150" required>
+
+        <label>Giro del negocio *</label>
+        <select name="giro" required>
+            <option value="">Selecciona un giro</option>
+            {% for giro in giros %}
+                <option value="{{ giro.id }}">{{ giro.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label>Teléfono</label>
+        <input type="tel" name="telefono"
+               placeholder="Número de teléfono"
+               maxlength="20">
+
+        <h3>Datos del administrador</h3>
+
+        <label>Nombre *</label>
+        <input type="text" name="nombre"
+               placeholder="Nombre completo"
+               maxlength="150" required>
+
+        <label>Apellido</label>
+        <input type="text" name="apellido"
+               placeholder="Apellidos"
+               maxlength="150">
+
+        <label>Correo electrónico *</label>
+        <input type="email" name="correo"
+               placeholder="ejemplo@correo.com"
+               maxlength="254" required>
+
+        <label>Contraseña *</label>
+        <input type="password" name="password"
+               placeholder="Crea una contraseña"
+               required>
+
+        <label>Confirmar contraseña *</label>
+        <input type="password" name="confirmar_password"
+               placeholder="Repite tu contraseña"
+               required>
+
+        <button type="submit">Registrar negocio</button>
+    </form>
+
+    <div class="login-link">
+        ¿Ya tienes una cuenta?
+        <a href="{% url 'login' %}">Inicia sesión</a>
+    </div>
+
+</div>
+
+</body>
+</html>

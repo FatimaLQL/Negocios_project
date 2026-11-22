@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Productos | NegocioPro{% endblock %}
+
+{% block page_name %}Productos{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Productos desactivados</h1>
+        <p>Consulta y recupera los productos de tu negocio.</p>
+    </div>
+</div>
+
+<div class="card">
+
+    <div class="toolbar">
+        <input
+            type="text"
+            id="buscarProducto"
+            class="form-control"
+            placeholder="Buscar por código o nombre..."
+        >
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Existencias</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody id="tablaProductos">
+
+                {% for producto in productos %}
+                <tr>
+                    <td>{{ producto.codigo|default:"—" }}</td>
+
+                    <td>
+                        <strong>{{ producto.nombre }}</strong>
+                    </td>
+
+                    <td>
+                        {{ producto.categoria.nombre|default:"Sin categoría" }}
+                    </td>
+
+                    <td>${{ producto.precio_venta|floatformat:2 }}</td>
+
+                    <td>{{ producto.existencias }} {{ producto.unidad_venta }}</td>
+
+                    <td>
+                        {% if producto.activo %}
+                            <span class="badge badge-success">Activo</span>
+                        {% else %}
+                            <span class="badge badge-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <button class="btn btn-secondary"
+                                type="button"
+                                data-url="{% url 'reactivar_producto' producto.id %}"
+                                onclick="abrirModalReactivar(this.dataset.url)"
+                                title="Reactivar producto">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Reactivar
+
+                        </button>
+                    </td>
+
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:30px;">
+                        <i class="fa-solid fa-box-open"
+                           style="font-size:28px; color:#849197;"></i>
+
+                        <p style="margin-top:10px; color:#849197;">
+                            No tienes productos desactivados.
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+{% block extra_modals %}
+
+<!-- Modal de confirmación para reactivar -->
+<div id="modalReactivarProducto" class="modal-overlay" style="display:none;">
+
+    <div class="modal-container" style="max-width: 420px;">
+
+        <div class="modal-header">
+            <h2>Reactivar producto</h2>
+
+            <button type="button"
+                    class="modal-close"
+                    onclick="cerrarModalReactivar()">
+                &times;
+            </button>
+        </div>
+
+        <div class="modal-body" style="text-align:center;">
+
+            <div style="font-size:45px; color:#28a745; margin-bottom:15px;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h3>¿Deseas reactivar este producto?</h3>
+
+            <p>
+                El producto volverá a aparecer en tu lista de productos activos.
+            </p>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button type="button"
+                    class="btn btn-secondary"
+                    onclick="cerrarModalReactivar()">
+                Cancelar
+            </button>
+
+            <form id="formReactivarProducto" method="POST">
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-primary">
+                    Sí, reactivar
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+    function abrirModalReactivar(url) {
+        const modal = document.getElementById('modalReactivarProducto');
+        const formulario = document.getElementById('formReactivarProducto');
+
+        formulario.action = url;
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalReactivar() {
+        const modal = document.getElementById('modalReactivarProducto');
+
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    document.getElementById('modalReactivarProducto').addEventListener('click', function(event) {
+        if (event.target === this) {
+            cerrarModalReactivar();
+        }
+    });
+
+    const buscador = document.getElementById('buscarProducto');
+
+    buscador.addEventListener('input', function() {
+        const texto = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#tablaProductos tr');
+
+        filas.forEach(function(fila) {
+            const contenido = fila.textContent.toLowerCase();
+            fila.style.display = contenido.includes(texto) ? '' : 'none';
+        });
+    });
+
+</script>
+{% endblock %}
+
