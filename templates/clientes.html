@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+{% block title %}Clientes | NegocioPro{% endblock %}
+
+{% block page_name %}Clientes{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Clientes</h1>
+        <p>Administra la información de tus clientes.</p>
+    </div>
+
+    <button class="btn btn-primary" onclick="abrirModalCliente()">
+        <i class="fas fa-plus"></i>
+        Nuevo cliente
+    </button>
+</div>
+
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-info">
+            <span>Total de clientes</span>
+            <h2>{{ total_clientes }}</h2>
+        </div>
+        <div class="kpi-icon">
+            <i class="fas fa-users"></i>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="toolbar">
+        <div>
+            <h3>Lista de clientes</h3>
+            <p>Consulta los clientes registrados en tu negocio.</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.nombre }} {{ cliente.apellido|default_if_none:"" }}</td>
+                    <td>{{ cliente.telefono|default:"-" }}</td>
+                    <td>{{ cliente.correo|default:"-" }}</td>
+                    <td>{{ cliente.direccion|default:"-" }}</td>
+                    <td>
+                        <button class="btn btn-secondary"
+                                type="button"
+                                onclick="abrirModalEditar(this)"
+                                title="Editar cliente"
+
+                                data-id="{{ cliente.id }}"
+                                data-nombre="{{ cliente.nombre }}"
+                                data-apellido="{{ cliente.apellido|default_if_none:'' }}"
+                                data-telefono="{{ cliente.telefono|default_if_none:'' }}"
+                                data-correo="{{ cliente.correo|default_if_none:'' }}"
+                                data-direccion="{{ cliente.direccion|default_if_none:'' }}">
+
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay clientes registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_modals %}
+
+<div class="modal-overlay" id="modalCliente">
+    <div class="modal-container">
+
+        <div class="modal-header">
+            <div>
+                <h2>Nuevo cliente</h2>
+                <p>Ingresa los datos del cliente.</p>
+            </div>
+
+            <button type="button" onclick="cerrarModalCliente()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{% url 'clientes' %}">
+            {% csrf_token %}
+
+            <div class="modal-body">
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" name="nombre"
+                               class="form-control"
+                               placeholder="Nombre del cliente"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" name="apellido"
+                               class="form-control"
+                               placeholder="Apellidos">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono"
+                               class="form-control"
+                               placeholder="Número de teléfono">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo electrónico</label>
+                        <input type="email" name="correo"
+                               class="form-control"
+                               placeholder="ejemplo@correo.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" name="direccion"
+                               class="form-control"
+                               placeholder="Dirección del cliente">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        onclick="cerrarModalCliente()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar cliente
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<div class="modal-overlay" id="modalEditarCliente">
+    <div class="modal-container">
+
+        <div class="modal-header">
+            <div>
+                <h2>Editar cliente</h2>
+                <p>Modifica la información del cliente.</p>
+            </div>
+
+            <button type="button" onclick="cerrarModalEditar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <form method="POST" action="{% url 'clientes' %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="accion" value="editar">
+            <input type="hidden" name="cliente_id" id="editar_cliente_id">
+
+            <div class="modal-body">
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" name="nombre" id="editar_nombre"
+                               class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" name="apellido" id="editar_apellido"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" id="editar_telefono"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo electrónico</label>
+                        <input type="email" name="correo" id="editar_correo"
+                               class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" name="direccion" id="editar_direccion"
+                               class="form-control">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                        onclick="cerrarModalEditar()">
+                    Cancelar
+                </button>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Guardar cambios
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // REGISTRAR CLIENTE
+    function abrirModalCliente() {
+        document.getElementById('modalCliente').classList.add('active');
+    }
+
+    function cerrarModalCliente() {
+        document.getElementById('modalCliente').classList.remove('active');
+    }
+
+    // EDITAR CLIENTE
+    function abrirModalEditar(boton) {
+        document.getElementById('editar_cliente_id').value = boton.dataset.id;
+        document.getElementById('editar_nombre').value = boton.dataset.nombre;
+        document.getElementById('editar_apellido').value = boton.dataset.apellido;
+        document.getElementById('editar_telefono').value = boton.dataset.telefono;
+        document.getElementById('editar_correo').value = boton.dataset.correo;
+        document.getElementById('editar_direccion').value = boton.dataset.direccion;
+
+        document.getElementById('modalEditarCliente').classList.add('active');
+    }
+
+    function cerrarModalEditar() {
+        document.getElementById('modalEditarCliente').classList.remove('active');
+    }
+
+    // CERRAR AL PRESIONAR FUERA DEL MODAL
+    document.getElementById('modalCliente').addEventListener('click', function(event) {
+        if (event.target === this) {
+            cerrarModalCliente();
+        }
+    });
+
+    document.getElementById('modalEditarCliente').addEventListener('click', function(event) {
+        if (event.target === this) {
+            cerrarModalEditar();
+        }
+    });
+</script>
+{% endblock %}

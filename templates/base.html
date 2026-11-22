@@ -1,0 +1,182 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Sistema de Negocios{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=4">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-store"></i>
+            </div>
+
+            <div class="brand-text">
+                <h2>NegocioPro</h2>
+                <span>Sistema de gestión</span>
+            </div>
+        </div>
+
+        <div class="menu-label">MENÚ PRINCIPAL</div>
+
+        <nav class="menu">
+
+            <a href="/" class="menu-link {% if active == 'inicio' %}active{% endif %}">
+                <i class="fa-solid fa-house"></i>
+                <span>Inicio</span>
+            </a>
+
+            <a href="/ventas/" class="menu-link {% if active == 'ventas' %}active{% endif %}">
+                <i class="fa-solid fa-cash-register"></i>
+                <span>Punto de venta</span>
+            </a>
+
+            <a href="/productos/" class="menu-link {% if active == 'productos' %}active{% endif %}">
+                <i class="fa-solid fa-box"></i>
+                <span>Productos</span>
+            </a>
+
+            <a href="/inventario/" class="menu-link {% if active == 'inventario' %}active{% endif %}">
+                <i class="fa-solid fa-warehouse"></i>
+                <span>Inventario</span>
+            </a>
+
+            <a href="/clientes/" class="menu-link {% if active == 'clientes' %}active{% endif %}">
+                <i class="fa-solid fa-users"></i>
+                <span>Clientes</span>
+            </a>
+
+            <a href="/proveedores/" class="menu-link {% if active == 'proveedores' %}active{% endif %}">
+                <i class="fa-solid fa-truck"></i>
+                <span>Proveedores</span>
+            </a>
+
+            <a href="/servicios/" class="menu-link {% if active == 'servicios' %}active{% endif %}">
+                <i class="fa-solid fa-screwdriver-wrench"></i>
+                <span>Servicios</span>
+            </a>
+
+            <a href="/cotizaciones/" class="menu-link {% if active == 'cotizaciones' %}active{% endif %}">
+                <i class="fa-solid fa-file-invoice"></i>
+                <span>Cotizaciones</span>
+            </a>
+
+            <div class="menu-label menu-label-secondary">
+                ADMINISTRACIÓN
+            </div>
+
+            <a href="/reportes/" class="menu-link {% if active == 'reportes' %}active{% endif %}">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+
+            <a href="/usuarios/" class="menu-link {% if active == 'usuarios' %}active{% endif %}">
+                <i class="fa-solid fa-user-gear"></i>
+                <span>Usuarios</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="user-mini">
+
+                <div class="avatar">
+                    {% if request.user.first_name and request.user.last_name %}
+                        {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                    {% elif request.user.first_name %}
+                        {{ request.user.first_name|first|upper }}
+                    {% else %}
+                        {{ request.user.correo|first|upper }}
+                    {% endif %}
+                </div>
+
+                <div>
+                    <strong>
+                        {% if request.user.first_name %}
+                            {{ request.user.first_name }}
+                            {{ request.user.last_name }}
+                        {% else %}
+                            {{ request.user.correo }}
+                        {% endif %}
+                    </strong>
+
+                    <span>
+                        {{ request.user.rol.nombre|default:"Usuario" }}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- BARRA SUPERIOR -->
+        <header class="topbar">
+
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <div class="breadcrumb">
+                <span>Sistema</span>
+                <i class="fa-solid fa-chevron-right"></i>
+                <strong>{% block page_name %}Inicio{% endblock %}</strong>
+            </div>
+
+            <div class="topbar-right">
+                <span class="status-indicator"></span>
+                <span class="status-text">Sistema activo</span>
+            </div>
+
+        </header>
+
+        <!-- CONTENIDO DINÁMICO -->
+        <section class="page-content">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}
+
+            {% endblock %}
+
+        </section>
+
+    </main>
+
+</div>
+
+{% block extra_modals %}
+{% endblock %}
+
+<script src="{% static 'js/app.js' %}"></script>
+
+
+{% block extra_js %}
+{% endblock %}
+
+</body>
+</html>
